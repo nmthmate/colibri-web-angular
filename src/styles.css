@@ -135,6 +135,10 @@ a {
 }
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   text-decoration: none;
   border: none;
   border-radius: 999px;
@@ -1116,6 +1120,8 @@ a {
 
   .hero-content {
     padding-right: 2.5rem;
+    text-align: center;
+    margin: 0 auto;
   }
 
   .hero-nav {
