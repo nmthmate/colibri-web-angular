@@ -914,9 +914,11 @@ a {
 
 .footer-inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
+  text-align: center;
+  gap: 0.75rem;
   padding: 1.2rem 0;
 }
 
@@ -928,6 +930,8 @@ a {
 
 .footer-inner nav {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.85rem;
 }
 
@@ -1230,11 +1234,6 @@ a {
 
   .age-actions .btn {
     width: 100%;
-  }
-
-  .footer-inner {
-    flex-direction: column;
-    text-align: center;
   }
 
   .mobile-quickbar {
