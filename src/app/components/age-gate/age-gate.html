@@ -1,0 +1,22 @@
+@if (!confirmed()) {
+  <div class="age-gate" role="dialog" aria-modal="true" aria-labelledby="ageGateTitle">
+    <div class="age-gate-card">
+      @if (!rejected()) {
+        <p class="age-badge">18+</p>
+        <h2 id="ageGateTitle">Alkoholtartalmú italokra vonatkozó figyelmeztetés</h2>
+        <p>
+          A weboldal alkoholtartalmú italokat is bemutat. Tizennyolc év alatti személy részére
+          alkoholtartalmú ital nem értékesíthető.
+        </p>
+        <div class="age-actions">
+          <button class="btn btn-solid" type="button" (click)="confirm()">Elmúltam 18</button>
+          <button class="btn btn-muted" type="button" (click)="reject()">Nem múltam el 18</button>
+        </div>
+      } @else {
+        <p class="age-badge">18+</p>
+        <h2>A tartalom nem érhető el</h2>
+        <p>18 év alatti látogatók számára ez az oldal nem megtekinthető.</p>
+      }
+    </div>
+  </div>
+}

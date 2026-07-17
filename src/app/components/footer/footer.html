@@ -1,0 +1,33 @@
+<footer class="site-footer">
+  @if (variant === 'home') {
+    <div class="container footer-rating-wrap">
+      <p>
+        Google értékelés:
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=Colibri+Italdiszkont,+Sz%C3%A9chenyi+utca+1,+Dunavars%C3%A1ny,+2336"
+          target="_blank"
+          rel="noreferrer"
+          ><strong>4.9 / 5</strong></a
+        >
+      </p>
+    </div>
+  }
+  <div class="container footer-inner">
+    <p>© {{ year }} Colibri Italdiszkont - Minden jog fenntartva</p>
+    @if (variant === 'home') {
+      <nav>
+        <a routerLink="/" fragment="top">Főoldal</a>
+        <a routerLink="/" fragment="kinalat">Kínálat</a>
+        <a routerLink="/" fragment="kapcsolat">Kapcsolat</a>
+        <a routerLink="/impresszum">Impresszum</a>
+        <a routerLink="/adatkezeles">Adatkezelés</a>
+      </nav>
+    } @else {
+      <nav>
+        <a routerLink="/">Főoldal</a>
+        <a routerLink="/impresszum">Impresszum</a>
+        <a routerLink="/adatkezeles">Adatkezelés</a>
+      </nav>
+    }
+  </div>
+</footer>

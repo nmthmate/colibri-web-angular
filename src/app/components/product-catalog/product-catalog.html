@@ -1,0 +1,126 @@
+<section id="kinalat" class="products reveal" appReveal>
+  <div class="container">
+    <div class="section-head">
+      <h2>Termékek</h2>
+      <p>Keresd meg gyorsan, amit ma vinnél.</p>
+    </div>
+
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Keresés név vagy kategória alapján..."
+        autocomplete="off"
+        [ngModel]="searchInput()"
+        (ngModelChange)="onSearchInput($event)"
+      />
+      <div class="filter-toolbar">
+        <label class="filter-control">
+          Ár
+          <select [ngModel]="productsService.activePriceRange()" (ngModelChange)="onPriceChange($event)">
+            <option value="all">Minden ár</option>
+            <option value="0-999">0-999 Ft</option>
+            <option value="1000-2999">1 000-2 999 Ft</option>
+            <option value="3000-4999">3 000-4 999 Ft</option>
+            <option value="5000+">5 000 Ft felett</option>
+          </select>
+        </label>
+
+        <label class="filter-check">
+          <input
+            type="checkbox"
+            [ngModel]="productsService.drsOnly()"
+            (ngModelChange)="onDrsChange($event)"
+          />
+          Csak DRS termékek
+        </label>
+
+        <button class="btn btn-muted filter-reset" type="button" (click)="clearFilters()">
+          Szűrők törlése
+        </button>
+      </div>
+
+      <div class="category-filters" aria-label="Termék kategória szűrők">
+        <button
+          class="filter-chip"
+          [class.active]="productsService.activeCategory() === 'all'"
+          type="button"
+          (click)="onCategoryClick('all')"
+        >
+          Összes
+        </button>
+        @for (category of productsService.categories(); track category) {
+          <button
+            class="filter-chip"
+            [class.active]="productsService.activeCategory() === category"
+            type="button"
+            (click)="onCategoryClick(category)"
+          >
+            {{ category }}
+          </button>
+        }
+      </div>
+      <p>{{ countLabel() }}</p>
+      <p class="product-disclaimer">
+        Az oldalon szereplő árak tájékoztató jellegű, bruttó fogyasztói árak (Ft). A készlet és árak
+        változhatnak.
+      </p>
+    </div>
+
+    <div class="products-grid" aria-live="polite">
+      @if (productsService.loading()) {
+        <p class="data-status">Termékek betöltése...</p>
+      } @else if (productsService.loadError()) {
+        <p class="data-status error">Nem sikerült betölteni a termékeket.</p>
+      } @else if (!productsService.visibleProducts().length) {
+        <p class="data-status">Nincs találat a beállított szűrőre.</p>
+      } @else {
+        @for (product of productsService.visibleProducts(); track product.name + product.category + product.price) {
+          <article
+            class="product-card is-clickable"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="(product.name || 'Termék') + ' részletei'"
+            (click)="openModal(product)"
+            (keydown.enter)="openModal(product)"
+            (keydown.space)="openModal(product)"
+          >
+            <h3>{{ product.name || 'Névtelen termék' }}</h3>
+            <div class="product-meta">
+              <p class="product-category">{{ product.category || 'Kategória nélkül' }}</p>
+              <p class="product-price">{{ product.price || 'Ár érdeklődjön' }}</p>
+            </div>
+            @if (depositAmount(product); as deposit) {
+              <p class="product-deposit-tag" [class.is-25]="deposit === 25">
+                DRS +{{ deposit }} Ft betétdíj
+              </p>
+            }
+          </article>
+        }
+      }
+    </div>
+
+    <div class="product-actions">
+      @if (productsService.remainingCount() > 0) {
+        <button class="btn btn-muted" type="button" (click)="loadMore()">
+          {{ loadMoreLabel() }}
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
+@if (selectedProduct(); as product) {
+  <div class="product-modal" role="dialog" aria-modal="true" aria-labelledby="productModalTitle" (click)="closeModal()">
+    <article class="product-modal-card" (click)="$event.stopPropagation()">
+      <button class="product-modal-close" type="button" aria-label="Bezárás" (click)="closeModal()">x</button>
+      <img
+        class="product-modal-image"
+        [src]="modalImageSrc()"
+        [alt]="(product.name || 'Termék') + ' képe'"
+        (error)="onModalImageError()"
+      />
+      <h3 id="productModalTitle">{{ product.name || 'Névtelen termék' }}</h3>
+      <p class="product-modal-price">{{ product.price || 'Ár érdeklődjön' }}</p>
+    </article>
+  </div>
+}

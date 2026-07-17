@@ -1,0 +1,14 @@
+<section class="hero" aria-label="Kiemelt ajánlatok" [ngStyle]="heroStyle()">
+  <div class="hero-overlay" aria-hidden="true"></div>
+  <div class="container hero-content">
+    <p class="hero-kicker">Colibri Italdiszkont</p>
+    <h1>{{ slide()?.title || 'Colibri Italdiszkont' }}</h1>
+    <p>{{ slide()?.subtitle || '' }}</p>
+    <p class="service-highlight">MOHU automata pont</p>
+    <a class="btn btn-solid" routerLink="/" fragment="kinalat" (click)="openCatalogFilter()"
+      >Kínálat megnyitása</a
+    >
+  </div>
+  <button class="hero-nav prev" type="button" aria-label="Előző slide" (click)="prev()">‹</button>
+  <button class="hero-nav next" type="button" aria-label="Következő slide" (click)="next()">›</button>
+</section>

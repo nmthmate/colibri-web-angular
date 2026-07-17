@@ -1,0 +1,9 @@
+<div class="topbar">
+  <p>18 éven aluliak részére alkoholtartalmú ital nem értékesíthető</p>
+</div>
+
+<app-header [variant]="isHome() ? 'home' : 'legal'"></app-header>
+
+<router-outlet></router-outlet>
+
+<app-footer [variant]="isHome() ? 'home' : 'legal'"></app-footer>

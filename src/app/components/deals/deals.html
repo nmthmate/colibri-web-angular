@@ -1,0 +1,39 @@
+<section id="akciok" class="deals reveal" appReveal>
+  <div class="container">
+    <div class="section-head section-head-light">
+      <h2>Aktuális akciók</h2>
+      <p>Heti ajánlatok a legnépszerűbb kategóriákból.</p>
+    </div>
+
+    <div class="deals-grid" aria-live="polite">
+      @if (!deals().length) {
+        <p class="data-status">Jelenleg nincs feltöltött akció.</p>
+      } @else {
+        @for (deal of deals(); track deal.title; let index = $index) {
+          <article class="deal-card" [attr.data-tone]="tone(index, deal.tone)">
+            <div class="deal-head">
+              <p class="deal-tag">{{ deal.tag || 'AJÁNLAT' }}</p>
+              <p class="deal-type">{{ deal.type || 'Boltban elérhető' }}</p>
+            </div>
+            <h3>{{ deal.title || 'Aktuális ajánlat' }}</h3>
+            <p class="deal-description">{{ deal.description || 'Részletek az üzletben.' }}</p>
+            <ul class="deal-meta">
+              <li>
+                <span>Érvényesség</span>
+                <strong>{{ deal.validity || 'A készlet erejéig' }}</strong>
+              </li>
+              <li>
+                <span>Feltétel</span>
+                <strong>{{ deal.condition || 'Részletek a pénztárnál' }}</strong>
+              </li>
+            </ul>
+            <div class="deal-footer">
+              <p class="deal-note">{{ deal.note || 'Az akció részleteiről érdeklődj üzletünkben.' }}</p>
+              <a class="deal-cta" routerLink="/" fragment="kapcsolat">Érdekel</a>
+            </div>
+          </article>
+        }
+      }
+    </div>
+  </div>
+</section>
