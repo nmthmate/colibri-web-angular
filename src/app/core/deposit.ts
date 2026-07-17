@@ -1,28 +1,6 @@
 import { Product } from './product.model';
 
-const DRS_ELIGIBLE_CATEGORIES = new Set([
-  'sör',
-  'cider',
-  'üdítő',
-  'energiaital',
-  'gyümölcslé',
-  'jegestea',
-  'szörp',
-  'ásványvíz',
-  'bor',
-  'pezsgő',
-  'whisky',
-  'vodka',
-  'gin',
-  'rum',
-  'tequila',
-  'likőr',
-  'pálinka',
-  'vermut',
-  'brandy',
-  'rövidital',
-  'abszint',
-]);
+const DRS_ELIGIBLE_CATEGORIES = new Set(['sör', 'üdítők', 'bor és pezsgő', 'röviditalok']);
 
 const COMBINING_DIACRITICS = /[̀-ͯ]/g;
 
