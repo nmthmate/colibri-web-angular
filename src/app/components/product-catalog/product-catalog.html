@@ -84,6 +84,7 @@
             (keydown.enter)="openModal(product)"
             (keydown.space)="openModal(product)"
           >
+            <div class="product-icon" aria-hidden="true">{{ categoryIcon(product.category) }}</div>
             <h3>{{ product.name || 'Névtelen termék' }}</h3>
             <div class="product-meta">
               <p class="product-category">{{ product.category || 'Kategória nélkül' }}</p>
