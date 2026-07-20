@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// Paste this whole file into Firebase Console > Firestore Database > Rules.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'asd@gmail.com';
+    }
+
+    // Public catalog: one aggregate doc per category, cheap to read for every visitor.
+    // Kept separate from the `products` collection so the public site never pays the
+    // cost of reading thousands of individual product documents.
+    match /catalog/{category} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /deals/{dealId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /heroSlides/{slideId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Source-of-truth product documents used by the admin panel. No public read -
+    // the public site only ever reads the /catalog aggregates above.
+    match /products/{productId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
