@@ -1,19 +1,23 @@
 export interface Product {
+  id?: string;
   name: string;
   category: string;
-  price: string;
+  price: number;
   image?: string;
   deposit?: boolean;
 }
 
 export interface HeroSlide {
+  id?: string;
   title: string;
   subtitle: string;
   image: string;
   imagePosition?: string;
+  order?: number;
 }
 
 export interface Deal {
+  id?: string;
   title: string;
   description?: string;
   tag?: string;

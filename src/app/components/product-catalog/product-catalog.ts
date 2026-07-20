@@ -4,6 +4,7 @@ import { EnrichedProduct } from '../../core/product.model';
 import { PriceRange, ProductsService } from '../../core/products.service';
 import { getDepositAmount } from '../../core/deposit';
 import { categoryIcon } from '../../core/category-icon';
+import { formatPrice } from '../../core/price';
 import { RevealOnScrollDirective } from '../../core/reveal-on-scroll.directive';
 
 const SEARCH_DEBOUNCE_MS = 130;
@@ -86,6 +87,10 @@ export class ProductCatalog {
 
   protected categoryIcon(category: string): string {
     return categoryIcon(category);
+  }
+
+  protected formatPrice(price: number): string {
+    return formatPrice(price);
   }
 
   protected openModal(product: EnrichedProduct): void {

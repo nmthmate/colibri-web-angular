@@ -88,7 +88,7 @@
             <h3>{{ product.name || 'Névtelen termék' }}</h3>
             <div class="product-meta">
               <p class="product-category">{{ product.category || 'Kategória nélkül' }}</p>
-              <p class="product-price">{{ product.price || 'Ár érdeklődjön' }}</p>
+              <p class="product-price">{{ formatPrice(product.price) }}</p>
             </div>
             @if (depositAmount(product); as deposit) {
               <p class="product-deposit-tag" [class.is-25]="deposit === 25">
@@ -128,7 +128,7 @@
         (error)="onModalImageError()"
       />
       <h3 id="productModalTitle">{{ product.name || 'Névtelen termék' }}</h3>
-      <p class="product-modal-price">{{ product.price || 'Ár érdeklődjön' }}</p>
+      <p class="product-modal-price">{{ formatPrice(product.price) }}</p>
     </article>
   </div>
 }
