@@ -1,0 +1,5 @@
+# TODO: replace colibri-italdiszkont.hu with the real production domain once it's decided.
+User-agent: *
+Allow: /
+
+Sitemap: https://colibri-italdiszkont.hu/sitemap.xml

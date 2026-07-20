@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- TODO: replace colibri-italdiszkont.hu below with the real production domain once it's decided. -->
 <html lang="hu">
 <head>
   <meta charset="utf-8">
@@ -6,7 +7,58 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Colibri Italdiszkont Dunavarsányban - italok, akciók és gyors kiszolgálás.">
+  <link rel="canonical" href="https://colibri-italdiszkont.hu/">
+  <meta name="theme-color" content="#7a1f2b">
+
+  <meta property="og:type" content="business.business">
+  <meta property="og:site_name" content="Colibri Italdiszkont">
+  <meta property="og:title" content="Colibri Italdiszkont | Dunavarsány">
+  <meta property="og:description" content="Colibri Italdiszkont Dunavarsányban - italok, akciók és gyors kiszolgálás.">
+  <meta property="og:image" content="https://colibri-italdiszkont.hu/logo.png">
+  <meta property="og:url" content="https://colibri-italdiszkont.hu/">
+  <meta property="og:locale" content="hu_HU">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Colibri Italdiszkont | Dunavarsány">
+  <meta name="twitter:description" content="Colibri Italdiszkont Dunavarsányban - italok, akciók és gyors kiszolgálás.">
+  <meta name="twitter:image" content="https://colibri-italdiszkont.hu/logo.png">
+
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LiquorStore",
+      "name": "Colibri Italdiszkont",
+      "image": "https://colibri-italdiszkont.hu/logo.png",
+      "url": "https://colibri-italdiszkont.hu/",
+      "telephone": "+36308736729",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Széchenyi utca 1.",
+        "addressLocality": "Dunavarsány",
+        "postalCode": "2336",
+        "addressCountry": "HU"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          "opens": "07:00",
+          "closes": "19:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Sunday",
+          "opens": "08:00",
+          "closes": "15:00"
+        }
+      ]
+    }
+  </script>
 </head>
 <body>
   <app-root></app-root>
