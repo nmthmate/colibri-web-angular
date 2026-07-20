@@ -112,6 +112,12 @@ export class ProductCatalog {
     this.selectedProduct.set(null);
   }
 
+  protected onBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
+  }
+
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
     this.closeModal();

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { Footer } from './components/footer/footer';
@@ -12,7 +12,8 @@ import { Header } from './components/header/header';
 export class App {
   protected readonly isHome = signal(true);
 
-  constructor(router: Router) {
+  constructor() {
+    const router = inject(Router);
     router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.isHome.set(router.url === '/' || router.url.startsWith('/#'));
     });

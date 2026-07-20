@@ -111,8 +111,15 @@
 </section>
 
 @if (selectedProduct(); as product) {
-  <div class="product-modal" role="dialog" aria-modal="true" aria-labelledby="productModalTitle" (click)="closeModal()">
-    <article class="product-modal-card" (click)="$event.stopPropagation()">
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape-key dismissal is handled globally via the document:keydown.escape listener in the component, and the close button below is fully keyboard-operable. -->
+  <div
+    class="product-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="productModalTitle"
+    (click)="onBackdropClick($event)"
+  >
+    <article class="product-modal-card">
       <button class="product-modal-close" type="button" aria-label="Bezárás" (click)="closeModal()">x</button>
       <img
         class="product-modal-image"
