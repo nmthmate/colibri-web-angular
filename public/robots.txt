@@ -1,4 +1,4 @@
-# TODO: replace colibri-italdiszkont.hu with the real production domain once it's decided.
+# TODO: set real domain
 User-agent: *
 Allow: /
 

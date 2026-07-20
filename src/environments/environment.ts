@@ -1,5 +1,4 @@
-// The Firebase web config below is not a secret - it's meant to be embedded in client code.
-// Real protection comes from Firestore security rules and Firebase Auth, not from hiding this.
+// Not a secret - meant to be public. Protection comes from Firestore rules and Auth.
 export const environment = {
   firebase: {
     apiKey: 'AIzaSyBdSN8bVUVH55JkO_ofgjmrSI7BEuUiG14',

@@ -9,8 +9,6 @@ const CATALOG_URL = firestoreCollectionUrl('catalog');
 const DEALS_URL = firestoreCollectionUrl('deals');
 const HERO_SLIDES_URL = firestoreCollectionUrl('heroSlides');
 
-// Mirrors the Firestore REST API's typed-value document format closely enough for testing the
-// parser in firestore-rest.ts without needing a live Firestore instance.
 function toFirestoreValue(value: unknown): unknown {
   if (typeof value === 'string') {
     return { stringValue: value };
@@ -88,8 +86,8 @@ describe('ProductsService', () => {
 
   it('flags a load error and stops loading on HTTP failure', () => {
     service.load();
-    // Flush the other two legs first so forkJoin has nothing left to cancel once the catalog
-    // request errors - flushing a request forkJoin has already cancelled throws in the harness.
+    // order matters: forkJoin cancels the other legs once one errors, and flushing a
+    // cancelled request throws - so flush these two before the erroring one below.
     httpMock.expectOne(DEALS_URL).flush({ documents: [] });
     httpMock.expectOne(HERO_SLIDES_URL).flush({ documents: [] });
     httpMock.expectOne(CATALOG_URL).flush('boom', { status: 500, statusText: 'Server Error' });

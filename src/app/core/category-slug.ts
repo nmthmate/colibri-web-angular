@@ -1,5 +1,3 @@
-// Canonical category list this shop uses today. The public catalog is stored in Firestore as
-// one aggregate document per category (see catalog.service.ts) - these slugs are the doc IDs.
 export const CATEGORY_SLUGS: Record<string, string> = {
   'Sör': 'sor',
   'Üdítők': 'uditok',

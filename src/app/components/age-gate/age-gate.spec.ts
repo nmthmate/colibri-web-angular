@@ -23,8 +23,7 @@ function createMemoryStorage(): Storage {
 
 describe('AgeGate', () => {
   beforeEach(() => {
-    // Node's own experimental global `localStorage` (unflagged since ~v24) shadows jsdom's
-    // implementation and throws without `--localstorage-file`, so stub in a real in-memory one.
+    // Node's global localStorage throws without --localstorage-file; stub a real one.
     vi.stubGlobal('localStorage', createMemoryStorage());
     document.body.classList.remove('lock-scroll');
     TestBed.configureTestingModule({ imports: [AgeGate] });

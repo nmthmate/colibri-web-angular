@@ -1,9 +1,5 @@
 import { environment } from '../../environments/environment';
 
-// Reads public Firestore data via the plain REST API instead of the Firestore SDK, so the public
-// site's bundle stays free of Firebase code. Works because /catalog, /deals and /heroSlides all
-// grant `allow read: if true` in firestore.rules - the same rule the SDK would be checked against.
-
 interface FirestoreValue {
   stringValue?: string;
   integerValue?: string;

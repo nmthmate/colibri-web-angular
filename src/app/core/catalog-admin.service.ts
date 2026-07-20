@@ -73,10 +73,6 @@ function toFirestoreHeroSlide(slide: HeroSlide): Record<string, unknown> {
 export class CatalogAdminService {
   private readonly db: Firestore = getFirestore(getFirebaseApp());
 
-  // --- Products (source of truth for admin CRUD). The public site never reads this collection
-  // directly - it reads the /catalog aggregates below via the Firestore REST API, which keeps
-  // read costs flat regardless of catalog size (one doc per category instead of one per product). ---
-
   async listProducts(): Promise<Product[]> {
     const snapshot = await getDocs(query(collection(this.db, 'products'), orderBy('name')));
     return snapshot.docs.map((docSnap) => ({
@@ -113,8 +109,6 @@ export class CatalogAdminService {
       updatedAt: Date.now(),
     });
   }
-
-  // --- Deals & hero slides: small collections, read directly by the public site. ---
 
   async listDeals(): Promise<Deal[]> {
     const snapshot = await getDocs(collection(this.db, 'deals'));
@@ -154,8 +148,6 @@ export class CatalogAdminService {
   async deleteHeroSlide(id: string): Promise<void> {
     await deleteDoc(doc(this.db, 'heroSlides', id));
   }
-
-  // --- One-time migration from the legacy public/kinalat.json snapshot. ---
 
   async importLegacyCatalog(
     catalog: CatalogData

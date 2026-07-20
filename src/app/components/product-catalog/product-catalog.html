@@ -111,7 +111,7 @@
 </section>
 
 @if (selectedProduct(); as product) {
-  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape-key dismissal is handled globally via the document:keydown.escape listener in the component, and the close button below is fully keyboard-operable. -->
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape handled via keydown.escape listener in the component -->
   <div
     class="product-modal"
     role="dialog"

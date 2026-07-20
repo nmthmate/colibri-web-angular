@@ -81,7 +81,7 @@
 }
 
 @if (formOpen()) {
-  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape-key dismissal is handled globally via the document:keydown.escape listener in the component, and both form actions below are fully keyboard-operable. -->
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape handled via keydown.escape listener in the component -->
   <div
     class="admin-modal"
     role="dialog"

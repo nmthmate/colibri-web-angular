@@ -1,4 +1,3 @@
-// Same Firebase project as production - this is a small single-project setup.
 export const environment = {
   firebase: {
     apiKey: 'AIzaSyBdSN8bVUVH55JkO_ofgjmrSI7BEuUiG14',
