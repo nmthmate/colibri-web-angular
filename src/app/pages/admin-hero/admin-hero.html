@@ -1,0 +1,87 @@
+<div class="admin-page-head">
+  <h1>Hero szekció</h1>
+  <button class="btn btn-solid" type="button" (click)="openAddForm()">+ Új dia</button>
+</div>
+
+@if (loading()) {
+  <p class="data-status">Diák betöltése...</p>
+} @else if (loadError()) {
+  <p class="data-status error">Nem sikerült betölteni a diákat.</p>
+} @else {
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Sorrend</th>
+          <th>Cím</th>
+          <th>Alcím</th>
+          <th>Kép</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (slide of slides(); track slide.id) {
+          <tr>
+            <td>{{ slide.order }}</td>
+            <td>{{ slide.title }}</td>
+            <td>{{ slide.subtitle }}</td>
+            <td>{{ slide.image }}</td>
+            <td class="admin-table-actions">
+              <button class="btn btn-muted" type="button" (click)="openEditForm(slide)">Szerkesztés</button>
+              <button class="btn btn-muted" type="button" (click)="deleteSlide(slide)">Törlés</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="data-status">Nincs feltöltött dia.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (formOpen()) {
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape-key dismissal is handled globally via the document:keydown.escape listener in the component, and both form actions below are fully keyboard-operable. -->
+  <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="heroFormTitle" (click)="onBackdropClick($event)">
+    <form class="admin-modal-card" (ngSubmit)="submitForm()">
+      <h2 id="heroFormTitle">{{ formValue().id ? 'Dia szerkesztése' : 'Új dia' }}</h2>
+
+      <label class="admin-field">
+        Cím
+        <input type="text" name="title" required [ngModel]="formValue().title" (ngModelChange)="updateForm({ title: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Alcím
+        <input type="text" name="subtitle" required [ngModel]="formValue().subtitle" (ngModelChange)="updateForm({ subtitle: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Kép (elérési út)
+        <input type="text" name="image" required [ngModel]="formValue().image" (ngModelChange)="updateForm({ image: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Kép pozíció (opcionális, pl. "center 40%")
+        <input type="text" name="imagePosition" [ngModel]="formValue().imagePosition" (ngModelChange)="updateForm({ imagePosition: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Sorrend
+        <input type="number" name="order" [ngModel]="formValue().order" (ngModelChange)="updateForm({ order: $event })" />
+      </label>
+
+      @if (formError()) {
+        <p class="admin-login-error">{{ formError() }}</p>
+      }
+
+      <div class="admin-modal-actions">
+        <button class="btn btn-muted" type="button" (click)="closeForm()">Mégse</button>
+        <button class="btn btn-solid" type="submit" [disabled]="formSaving()">
+          {{ formSaving() ? 'Mentés...' : 'Mentés' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

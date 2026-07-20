@@ -1,0 +1,21 @@
+<div class="admin-shell">
+  <header class="admin-topbar">
+    <div class="admin-topbar-brand">
+      <img src="favicon.png" alt="" />
+      <span>Colibri admin</span>
+    </div>
+    <nav class="admin-nav">
+      <a routerLink="/admin/termekek" routerLinkActive="active">Termékek</a>
+      <a routerLink="/admin/akciok" routerLinkActive="active">Akciók</a>
+      <a routerLink="/admin/hero" routerLinkActive="active">Hero szekció</a>
+    </nav>
+    <div class="admin-topbar-user">
+      <span>{{ userEmail() }}</span>
+      <button class="btn btn-muted" type="button" (click)="logout()">Kijelentkezés</button>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

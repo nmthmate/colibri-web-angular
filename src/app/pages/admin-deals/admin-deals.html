@@ -1,0 +1,95 @@
+<div class="admin-page-head">
+  <h1>Akciók</h1>
+  <button class="btn btn-solid" type="button" (click)="openAddForm()">+ Új akció</button>
+</div>
+
+@if (loading()) {
+  <p class="data-status">Akciók betöltése...</p>
+} @else if (loadError()) {
+  <p class="data-status error">Nem sikerült betölteni az akciókat.</p>
+} @else {
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Cím</th>
+          <th>Címke</th>
+          <th>Érvényesség</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (deal of deals(); track deal.id) {
+          <tr>
+            <td>{{ deal.title }}</td>
+            <td>{{ deal.tag || '—' }}</td>
+            <td>{{ deal.validity || '—' }}</td>
+            <td class="admin-table-actions">
+              <button class="btn btn-muted" type="button" (click)="openEditForm(deal)">Szerkesztés</button>
+              <button class="btn btn-muted" type="button" (click)="deleteDeal(deal)">Törlés</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="data-status">Nincs feltöltött akció.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (formOpen()) {
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape-key dismissal is handled globally via the document:keydown.escape listener in the component, and both form actions below are fully keyboard-operable. -->
+  <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="dealFormTitle" (click)="onBackdropClick($event)">
+    <form class="admin-modal-card" (ngSubmit)="submitForm()">
+      <h2 id="dealFormTitle">{{ formValue().id ? 'Akció szerkesztése' : 'Új akció' }}</h2>
+
+      <label class="admin-field">
+        Cím
+        <input type="text" name="title" required [ngModel]="formValue().title" (ngModelChange)="updateForm({ title: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Leírás
+        <textarea rows="2" name="description" [ngModel]="formValue().description" (ngModelChange)="updateForm({ description: $event })"></textarea>
+      </label>
+
+      <label class="admin-field">
+        Címke (pl. AJÁNLAT)
+        <input type="text" name="tag" [ngModel]="formValue().tag" (ngModelChange)="updateForm({ tag: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Típus (pl. Boltban elérhető)
+        <input type="text" name="type" [ngModel]="formValue().type" (ngModelChange)="updateForm({ type: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Érvényesség
+        <input type="text" name="validity" [ngModel]="formValue().validity" (ngModelChange)="updateForm({ validity: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Feltétel
+        <input type="text" name="condition" [ngModel]="formValue().condition" (ngModelChange)="updateForm({ condition: $event })" />
+      </label>
+
+      <label class="admin-field">
+        Megjegyzés
+        <input type="text" name="note" [ngModel]="formValue().note" (ngModelChange)="updateForm({ note: $event })" />
+      </label>
+
+      @if (formError()) {
+        <p class="admin-login-error">{{ formError() }}</p>
+      }
+
+      <div class="admin-modal-actions">
+        <button class="btn btn-muted" type="button" (click)="closeForm()">Mégse</button>
+        <button class="btn btn-solid" type="submit" [disabled]="formSaving()">
+          {{ formSaving() ? 'Mentés...' : 'Mentés' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

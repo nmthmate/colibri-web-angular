@@ -1,0 +1,38 @@
+<div class="admin-login">
+  <form class="admin-login-card" (ngSubmit)="submit()">
+    <h1>Colibri admin</h1>
+    <p class="admin-login-subtitle">Bejelentkezés a termékkezelő felületre.</p>
+
+    <label class="admin-field">
+      E-mail
+      <input
+        type="email"
+        name="email"
+        autocomplete="username"
+        required
+        [ngModel]="email()"
+        (ngModelChange)="email.set($event)"
+      />
+    </label>
+
+    <label class="admin-field">
+      Jelszó
+      <input
+        type="password"
+        name="password"
+        autocomplete="current-password"
+        required
+        [ngModel]="password()"
+        (ngModelChange)="password.set($event)"
+      />
+    </label>
+
+    @if (errorMessage()) {
+      <p class="admin-login-error">{{ errorMessage() }}</p>
+    }
+
+    <button class="btn btn-solid" type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Bejelentkezés...' : 'Bejelentkezés' }}
+    </button>
+  </form>
+</div>

@@ -1,0 +1,164 @@
+<div class="admin-page-head">
+  <h1>Termékek</h1>
+  <div class="admin-page-head-actions">
+    <button class="btn btn-muted" type="button" [disabled]="importing()" (click)="importLegacyCatalog()">
+      {{ importing() ? 'Importálás...' : 'Import kinalat.json-ból' }}
+    </button>
+    <button class="btn btn-solid" type="button" (click)="openAddForm()">+ Új termék</button>
+  </div>
+</div>
+
+@if (importMessage()) {
+  <p class="admin-import-message">{{ importMessage() }}</p>
+}
+
+<div class="admin-toolbar">
+  <input
+    type="text"
+    placeholder="Keresés név vagy kategória alapján..."
+    [ngModel]="search()"
+    (ngModelChange)="search.set($event)"
+  />
+  <div class="admin-chip-row">
+    <button
+      class="filter-chip"
+      type="button"
+      [class.active]="activeCategory() === 'all'"
+      (click)="activeCategory.set('all')"
+    >
+      Összes
+    </button>
+    @for (category of categories; track category) {
+      <button
+        class="filter-chip"
+        type="button"
+        [class.active]="activeCategory() === category"
+        (click)="activeCategory.set(category)"
+      >
+        {{ category }}
+      </button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <p class="data-status">Termékek betöltése...</p>
+} @else if (loadError()) {
+  <p class="data-status error">Nem sikerült betölteni a termékeket.</p>
+} @else {
+  <p class="admin-count">{{ filteredProducts().length }} / {{ products().length }} termék</p>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Név</th>
+          <th>Kategória</th>
+          <th>Ár</th>
+          <th>Betétdíj</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of filteredProducts(); track product.id) {
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ formatPrice(product.price) }}</td>
+            <td>{{ product.deposit ? 'Igen' : '' }}</td>
+            <td class="admin-table-actions">
+              <button class="btn btn-muted" type="button" (click)="openEditForm(product)">Szerkesztés</button>
+              <button class="btn btn-muted" type="button" (click)="deleteProduct(product)">Törlés</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="data-status">Nincs találat.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (formOpen()) {
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -- Escape-key dismissal is handled globally via the document:keydown.escape listener in the component, and both form actions below are fully keyboard-operable. -->
+  <div
+    class="admin-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="productFormTitle"
+    (click)="onBackdropClick($event)"
+  >
+    <form class="admin-modal-card" (ngSubmit)="submitForm()">
+      <h2 id="productFormTitle">{{ formValue().id ? 'Termék szerkesztése' : 'Új termék' }}</h2>
+
+      <label class="admin-field">
+        Név
+        <input
+          type="text"
+          name="name"
+          required
+          [ngModel]="formValue().name"
+          (ngModelChange)="updateForm({ name: $event })"
+        />
+      </label>
+
+      <label class="admin-field">
+        Kategória
+        <select
+          name="category"
+          required
+          [ngModel]="formValue().category"
+          (ngModelChange)="updateForm({ category: $event })"
+        >
+          @for (category of categories; track category) {
+            <option [value]="category">{{ category }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="admin-field">
+        Ár (Ft)
+        <input
+          type="number"
+          name="price"
+          min="1"
+          required
+          [ngModel]="formValue().price"
+          (ngModelChange)="updateForm({ price: $event })"
+        />
+      </label>
+
+      <label class="admin-field">
+        Kép (elérési út, opcionális)
+        <input
+          type="text"
+          name="image"
+          [ngModel]="formValue().image"
+          (ngModelChange)="updateForm({ image: $event })"
+        />
+      </label>
+
+      <label class="admin-checkbox-field">
+        <input
+          type="checkbox"
+          name="deposit"
+          [ngModel]="formValue().deposit"
+          (ngModelChange)="updateForm({ deposit: $event })"
+        />
+        Betétdíjas (DRS)
+      </label>
+
+      @if (formError()) {
+        <p class="admin-login-error">{{ formError() }}</p>
+      }
+
+      <div class="admin-modal-actions">
+        <button class="btn btn-muted" type="button" (click)="closeForm()">Mégse</button>
+        <button class="btn btn-solid" type="submit" [disabled]="formSaving()">
+          {{ formSaving() ? 'Mentés...' : 'Mentés' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}
