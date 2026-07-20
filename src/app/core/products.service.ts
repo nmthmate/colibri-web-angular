@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { CatalogData, Deal, EnrichedProduct, HeroSlide, Product } from './product.model';
+import { forkJoin } from 'rxjs';
+import { Deal, EnrichedProduct, HeroSlide, Product } from './product.model';
 import { getDepositAmount } from './deposit';
+import { parsePriceText } from './price';
+import { FirestoreListResponse, firestoreCollectionUrl, parseFirestoreDocument } from './firestore-rest';
 
 export type PriceRange = 'all' | '0-999' | '1000-2999' | '3000-4999' | '5000+';
 
@@ -22,16 +25,12 @@ function normalizeForSearch(text: unknown): string {
     .trim();
 }
 
-function parsePriceValue(priceText: unknown): number {
-  const numeric = Number(String(priceText || '').replace(/[^\d]/g, ''));
-  return Number.isFinite(numeric) ? numeric : 0;
-}
-
 function enrichProduct(product: Product): EnrichedProduct {
   const normalizedName = normalizeForSearch(product.name);
   const normalizedCategory = normalizeForSearch(product.category);
   const searchText = `${normalizedName} ${normalizedCategory}`.trim();
   const searchWords = searchText.split(/[^a-z0-9]+/).filter((word) => word.length > 1);
+  const priceValue = Number.isFinite(product.price) ? product.price : parsePriceText(product.price);
 
   return {
     ...product,
@@ -39,7 +38,7 @@ function enrichProduct(product: Product): EnrichedProduct {
     normalizedCategory,
     searchText,
     searchWords,
-    priceValue: parsePriceValue(product.price),
+    priceValue,
   };
 }
 
@@ -192,11 +191,29 @@ export class ProductsService {
   readonly remainingCount = computed(() => this.filteredProducts().length - this.visibleCount());
 
   load(): void {
-    this.http.get<CatalogData>('kinalat.json').subscribe({
-      next: (data) => {
-        this.heroSlides.set(Array.isArray(data.heroSlides) ? data.heroSlides : []);
-        this.deals.set(Array.isArray(data.akciok) ? data.akciok : []);
-        const rawProducts = Array.isArray(data.termekek) ? data.termekek : [];
+    forkJoin({
+      catalog: this.http.get<FirestoreListResponse>(firestoreCollectionUrl('catalog')),
+      deals: this.http.get<FirestoreListResponse>(firestoreCollectionUrl('deals')),
+      heroSlides: this.http.get<FirestoreListResponse>(firestoreCollectionUrl('heroSlides')),
+    }).subscribe({
+      next: ({ catalog, deals, heroSlides }) => {
+        const rawProducts: Product[] = [];
+        for (const document of catalog.documents || []) {
+          const data = parseFirestoreDocument(document) as { products?: Product[] };
+          if (Array.isArray(data.products)) {
+            rawProducts.push(...data.products);
+          }
+        }
+
+        const rawHeroSlides = (heroSlides.documents || [])
+          .map((document) => parseFirestoreDocument(document) as unknown as HeroSlide)
+          .sort((first, second) => (first.order ?? 0) - (second.order ?? 0));
+        const rawDeals = (deals.documents || []).map(
+          (document) => parseFirestoreDocument(document) as unknown as Deal
+        );
+
+        this.heroSlides.set(rawHeroSlides);
+        this.deals.set(rawDeals);
         this.allProducts.set(sortProductsByName(rawProducts.map(enrichProduct)));
         this.loading.set(false);
       },

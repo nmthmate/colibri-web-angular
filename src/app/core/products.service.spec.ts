@@ -1,20 +1,57 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { CatalogData } from './product.model';
+import { Deal, HeroSlide, Product } from './product.model';
 import { ProductsService } from './products.service';
+import { firestoreCollectionUrl } from './firestore-rest';
 
-const CATALOG: CatalogData = {
-  heroSlides: [{ title: 'Nyári akció', subtitle: 'Hideg sörök', image: 'sor.jpg' }],
-  akciok: [{ title: 'Sör akció' }],
-  termekek: [
-    { name: "Jack Daniel's Tennessee Whiskey 0,7 L", category: 'Röviditalok', price: '9 990 Ft' },
-    { name: 'Dreher Classic 0,5 L palack', category: 'Sör', price: '450 Ft' },
-    { name: 'Coca Cola 0,5 L can', category: 'Üdítők', price: '600 Ft' },
-    { name: 'Tokaji Aszú 0,5 L', category: 'Bor és pezsgő', price: '5 500 Ft' },
-    { name: 'Chio Chips 100 g', category: 'Snack', price: '990 Ft' },
-  ],
-};
+const CATALOG_URL = firestoreCollectionUrl('catalog');
+const DEALS_URL = firestoreCollectionUrl('deals');
+const HERO_SLIDES_URL = firestoreCollectionUrl('heroSlides');
+
+// Mirrors the Firestore REST API's typed-value document format closely enough for testing the
+// parser in firestore-rest.ts without needing a live Firestore instance.
+function toFirestoreValue(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return { stringValue: value };
+  }
+  if (typeof value === 'number') {
+    return Number.isInteger(value) ? { integerValue: String(value) } : { doubleValue: value };
+  }
+  if (typeof value === 'boolean') {
+    return { booleanValue: value };
+  }
+  if (Array.isArray(value)) {
+    return { arrayValue: { values: value.map(toFirestoreValue) } };
+  }
+  if (value && typeof value === 'object') {
+    return { mapValue: { fields: toFirestoreFields(value as Record<string, unknown>) } };
+  }
+  return { nullValue: null };
+}
+
+function toFirestoreFields(obj: Record<string, unknown>): Record<string, unknown> {
+  const fields: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    fields[key] = toFirestoreValue(value);
+  }
+  return fields;
+}
+
+function toFirestoreDoc<T extends object>(obj: T): { fields: Record<string, unknown> } {
+  return { fields: toFirestoreFields(obj as unknown as Record<string, unknown>) };
+}
+
+const PRODUCTS: Product[] = [
+  { name: "Jack Daniel's Tennessee Whiskey 0,7 L", category: 'Röviditalok', price: 9990 },
+  { name: 'Dreher Classic 0,5 L palack', category: 'Sör', price: 450 },
+  { name: 'Coca Cola 0,5 L can', category: 'Üdítők', price: 600 },
+  { name: 'Tokaji Aszú 0,5 L', category: 'Bor és pezsgő', price: 5500 },
+  { name: 'Chio Chips 100 g', category: 'Snack', price: 990 },
+];
+
+const DEALS: Deal[] = [{ title: 'Sör akció' }];
+const HERO_SLIDES: HeroSlide[] = [{ title: 'Nyári akció', subtitle: 'Hideg sörök', image: 'sor.jpg', order: 0 }];
 
 describe('ProductsService', () => {
   let service: ProductsService;
@@ -32,12 +69,14 @@ describe('ProductsService', () => {
     httpMock.verify();
   });
 
-  function loadCatalog(): void {
+  function loadCatalog(products: Product[] = PRODUCTS, deals: Deal[] = DEALS, heroSlides: HeroSlide[] = HERO_SLIDES): void {
     service.load();
-    httpMock.expectOne('kinalat.json').flush(CATALOG);
+    httpMock.expectOne(CATALOG_URL).flush({ documents: [toFirestoreDoc({ products })] });
+    httpMock.expectOne(DEALS_URL).flush({ documents: deals.map(toFirestoreDoc) });
+    httpMock.expectOne(HERO_SLIDES_URL).flush({ documents: heroSlides.map(toFirestoreDoc) });
   }
 
-  it('loads products, hero slides and deals from kinalat.json', () => {
+  it('loads products, hero slides and deals from Firestore', () => {
     loadCatalog();
 
     expect(service.loading()).toBe(false);
@@ -49,7 +88,11 @@ describe('ProductsService', () => {
 
   it('flags a load error and stops loading on HTTP failure', () => {
     service.load();
-    httpMock.expectOne('kinalat.json').flush('boom', { status: 500, statusText: 'Server Error' });
+    // Flush the other two legs first so forkJoin has nothing left to cancel once the catalog
+    // request errors - flushing a request forkJoin has already cancelled throws in the harness.
+    httpMock.expectOne(DEALS_URL).flush({ documents: [] });
+    httpMock.expectOne(HERO_SLIDES_URL).flush({ documents: [] });
+    httpMock.expectOne(CATALOG_URL).flush('boom', { status: 500, statusText: 'Server Error' });
 
     expect(service.loading()).toBe(false);
     expect(service.loadError()).toBe(true);
@@ -146,13 +189,12 @@ describe('ProductsService', () => {
   });
 
   it('paginates visible products and exposes the remaining count via loadMore', () => {
-    const manyProducts = Array.from({ length: 120 }, (_, i) => ({
+    const manyProducts: Product[] = Array.from({ length: 120 }, (_, i) => ({
       name: `Termék ${i}`,
       category: 'Snack',
-      price: '100 Ft',
+      price: 100,
     }));
-    service.load();
-    httpMock.expectOne('kinalat.json').flush({ heroSlides: [], akciok: [], termekek: manyProducts });
+    loadCatalog(manyProducts, [], []);
 
     expect(service.visibleProducts().length).toBe(50);
     expect(service.remainingCount()).toBe(70);
